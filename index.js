@@ -4,6 +4,7 @@ var Hapi = require('hapi');
 var nconf = require('nconf');
 var SocketIO = require('socket.io');
 var crypto = require('crypto');
+var fs = require('fs');
 
 var services = require('./lib/services');
 
@@ -11,7 +12,16 @@ nconf.argv().env().file({ file: 'local.json' });
 
 var users = 0;
 
-var hapiOptions = {tls: nconf.get('tls')};
+var tlsOptions = nconf.get('tls');
+if (tlsOptions) {
+    if ('keyFile' in tlsOptions) {
+	tlsOptions['key'] = fs.readFileSync(tlsOptions['keyFile']);
+    }
+    if ('certFile' in tlsOptions) {
+	tlsOptions['cert'] = fs.readFileSync(tlsOptions['certFile']);
+    }
+}
+var hapiOptions = {tls: tlsOptions};
 var server = Hapi.createServer(nconf.get('domain'), nconf.get('port'), hapiOptions);
 server.views({
   engines: {
