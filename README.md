@@ -28,6 +28,25 @@ Everything else: [https://trac.ffmpeg.org/wiki/CompilationGuide](https://trac.ff
     cp local.json-dist local.json
     npm start
 
+## Using TLS
+
+You can configure the server to use TLS by including a `tls` option in `local.json`.  The `tls` option eventually gets passed as the "options" object to [`tls.createServer`](https://nodejs.org/api/tls.html#tls_tls_createserver_options_secureconnectionlistener).
+
+Within the `tls` option, you can either specify `key` and `cert` using the PEM-formatted data of the private key and the certificate, respectively, or `keyFile` and `certFile`, in which case the private key and the certificate will be read from files.
+
+Sample config file:
+
+```
+{
+    "domain": "localhost",
+    "port": 3000,
+    "wsServer": "ws://localhost:3000",
+    "tls": {"keyFile": "key.pem", "certFile": "cert.pem"}
+}
+```
+
+Using TLS can be desirable, since recent versions of Chrome don't allow accessing the camera unless the web site is either accessed as `localhost` or uses TLS.
+
 ## Accessing the API
 
 This is using the latest version of [socket.io](http://socket.io) and will not work with the old version from the previous meatspace API.
